@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import {
   signOut,
-  getCurrentUser,
-  fetchUserAttributes,
+  fetchAuthSession,
   signInWithRedirect,
 } from 'aws-amplify/auth';
 import type { AuthState, AuthUser } from '@/types/auth';
@@ -14,16 +13,16 @@ interface AuthStore extends AuthState {
 }
 
 async function buildUser(): Promise<AuthUser> {
-  const [currentUser, attributes] = await Promise.all([
-    getCurrentUser(),
-    fetchUserAttributes(),
-  ]);
+  const session = await fetchAuthSession();
+  const idToken = session.tokens?.idToken;
+  if (!idToken) throw new Error('No session');
 
+  const payload = idToken.payload;
   return {
-    sub: currentUser.userId,
-    email: attributes.email ?? '',
-    name: attributes.name ?? attributes.email ?? '',
-    role: (attributes['custom:role'] as AuthUser['role']) ?? null,
+    sub: payload.sub as string,
+    email: (payload.email as string) ?? '',
+    name: (payload.name as string) ?? (payload.email as string) ?? '',
+    role: (payload['custom:role'] as AuthUser['role']) ?? null,
   };
 }
 
