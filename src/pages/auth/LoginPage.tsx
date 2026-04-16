@@ -1,8 +1,29 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 
 export function LoginPage() {
-  const { signInWithGoogle, isLoading, error } = useAuth();
+  const { signInWithGoogle, signInWithEmail, isLoading, error } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  async function handleEmailSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setEmailError('');
+    if (!email.trim()) {
+      setEmailError('Email is required');
+      return;
+    }
+    try {
+      await signInWithEmail(email.trim());
+      navigate('/login/verify');
+    } catch {
+      // error shown from store
+    }
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -39,6 +60,26 @@ export function LoginPage() {
             <GoogleIcon />
             Continue with Google
           </Button>
+
+          <div className="my-6 flex items-center gap-3">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs text-gray-400">or</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          <form onSubmit={handleEmailSubmit} className="space-y-3">
+            <Input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={emailError}
+              disabled={isLoading}
+            />
+            <Button type="submit" fullWidth isLoading={isLoading}>
+              Continue with Email
+            </Button>
+          </form>
         </div>
       </div>
     </div>

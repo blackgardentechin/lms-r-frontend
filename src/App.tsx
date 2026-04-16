@@ -5,6 +5,8 @@ import { ProtectedRoute } from '@/components/layout/ProtectedRoute';
 import { Navbar } from '@/components/layout/Navbar';
 import { LoginPage } from '@/pages/auth/LoginPage';
 import { OAuthCallbackPage } from '@/pages/auth/OAuthCallbackPage';
+import { OtpVerifyPage } from '@/pages/auth/OtpVerifyPage';
+import { CompleteProfilePage } from '@/pages/auth/CompleteProfilePage';
 import { HomePage } from '@/pages/home/HomePage';
 
 function AuthInitializer() {
@@ -34,6 +36,8 @@ const router = createBrowserRouter([
     ),
     children: [
       { path: '/login', element: <LoginPage /> },
+      { path: '/login/verify', element: <OtpVerifyPage /> },
+      { path: '/login/complete-profile', element: <CompleteProfilePage /> },
       { path: '/auth/callback', element: <OAuthCallbackPage /> },
 
       {
