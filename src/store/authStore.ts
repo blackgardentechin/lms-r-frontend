@@ -68,7 +68,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
     try {
       await signIn({
         username: email,
-        options: { authFlowType: 'USER_AUTH' },
+        options: { authFlowType: 'USER_AUTH', preferredChallenge: 'EMAIL_OTP' },
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to send OTP';
